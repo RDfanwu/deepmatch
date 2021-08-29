@@ -72,8 +72,9 @@ def train_one_epoch(net, train_loader, opt):
 
 def train(args, net, train_loader, test_loader, boardio, textio):
     opt = optim.Adam(net.parameters(), lr=0.001, weight_decay=1e-4)
-    scheduler = MultiStepLR(opt, milestones=[5, 10], gamma=0.1) if not args.unseen \
-        else MultiStepLR(opt, milestones=[10, 20], gamma=0.1)
+    scheduler = MultiStepLR(opt, milestones=[5, 10], gamma=0.1)
+    if args.unseen:
+        scheduler = MultiStepLR(opt, milestones=[10, 20], gamma=0.1)
 
     best_test_loss = np.inf
     best_test_r_mse = np.inf
