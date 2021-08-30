@@ -8,7 +8,7 @@ This code has been tested on
 To create a virtual environment and install the required dependences please run:
 ```
 git clone https://github.com/awuBugless/deepmatch
-conda create -n deepmatch python=3.8.8
+conda create -n deepmatch python=3.6.13
 conda activate deepmatch
 conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch
 pip install -r requirements.txt
