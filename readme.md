@@ -26,15 +26,15 @@ The dataset ModelNet40 will be downloaded automatically.
 ## Train
 
 ```shell
-python train.py --exp_name=clean
-python train.py --exp_name=gn --gaussian_noise=True
-python train.py --exp_name=unseen --unseen=True
+python main.py --exp_name=clean
+python main.py --exp_name=gn --gaussian_noise=True
+python main.py --exp_name=unseen --unseen=True
 ```
 
 ## Test
 
 ```shell
-python test.py --exp_name=clean --model_path="pretrained/clean.best.t7"
-python test.py --exp_name=gn --gaussian_noise=True --model_path="pretrained/gn.best.t7"
-python test.py --exp_name=unseen --unseen=True --model_path="pretrained/unseen.best.t7"
+python main.py --eval=True --exp_name=clean --model_path="pretrained/clean.best.t7"
+python main.py --eval=True --exp_name=gn --gaussian_noise=True --model_path="pretrained/gn.best.t7"
+python main.py --eval=True --exp_name=unseen --unseen=True --model_path="pretrained/unseen.best.t7"
 ```
