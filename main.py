@@ -67,6 +67,8 @@ def get_args():
                         help='Pretrained model path')
     parser.add_argument('--factor', type=float, default=4, metavar='N',
                         help='Divided factor for rotations')
+    parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
+                        help='learning rate (default: 0.001)')
     parser.add_argument('--eval', action='store_true', default=False,
                         help='evaluate the model')
 
@@ -198,7 +200,7 @@ def train_one_epoch(net, train_loader, opt):
 
 
 def train(args, net, train_loader, test_loader, boardio, textio):
-    opt = optim.Adam(net.parameters(), lr=0.001, weight_decay=1e-4)
+    opt = optim.Adam(net.parameters(), lr=args.lr, weight_decay=1e-4)
     scheduler = MultiStepLR(opt, milestones=[5, 10], gamma=0.1)
     if args.unseen:
         scheduler = MultiStepLR(opt, milestones=[10, 20], gamma=0.1)
