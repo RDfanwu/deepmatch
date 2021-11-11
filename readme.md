@@ -34,7 +34,7 @@ python main.py --exp_name=unseen --unseen=True
 ## Test
 
 ```shell
-python main.py --eval=True --exp_name=clean --model_path="pretrained/clean.best.t7"
-python main.py --eval=True --exp_name=gn --gaussian_noise=True --model_path="pretrained/gn.best.t7"
-python main.py --eval=True --exp_name=unseen --unseen=True --model_path="pretrained/unseen.best.t7"
+python main.py --eval --exp_name=clean --model_path="pretrained/clean.best.t7"
+python main.py --eval --exp_name=gn --gaussian_noise=True --model_path="pretrained/gn.best.t7"
+python main.py --eval --exp_name=unseen --unseen=True --model_path="pretrained/unseen.best.t7"
 ```
