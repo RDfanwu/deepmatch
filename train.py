@@ -12,12 +12,11 @@ import torch.nn.functional as F
 from torch.optim.lr_scheduler import MultiStepLR
 from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
-from data.dataload import ModelNet40
-from init import init
-from init import IOStream
-from models.net import DeepMatch
+from model import DeepMatch
+from data import ModelNet40
+from init import *
+from utils import *
 from test import test_one_epoch
-from util import transform_point_cloud, npmat2euler
 
 import datetime
 
@@ -60,7 +59,6 @@ def train_one_epoch(net, train_loader, opt):
         opt.step()
         total_loss += loss.item() * batch_size
 
-
     rotations = np.concatenate(rotations, axis=0)
     translations = np.concatenate(translations, axis=0)
     rotations_pred = np.concatenate(rotations_pred, axis=0)
@@ -69,6 +67,7 @@ def train_one_epoch(net, train_loader, opt):
     eulers = np.concatenate(eulers, axis=0)
 
     return total_loss * 1.0 / num_examples, rotations, translations, rotations_pred, translations_pred, eulers
+
 
 def train(args, net, train_loader, test_loader, boardio, textio):
     opt = optim.Adam(net.parameters(), lr=0.001, weight_decay=1e-4)
@@ -82,7 +81,6 @@ def train(args, net, train_loader, test_loader, boardio, textio):
     best_test_t_mse = np.inf
     best_test_t_mae = np.inf
     best_test_recall = np.inf
-
 
     for epoch in range(args.epochs):
         if not args.unseen:
@@ -119,7 +117,6 @@ def train(args, net, train_loader, test_loader, boardio, textio):
                 cnt += 1
         test_recall = 100.00 * cnt / sm
 
-
         if best_test_loss >= test_loss:
             best_test_loss = test_loss
 
@@ -145,7 +142,8 @@ def train(args, net, train_loader, test_loader, boardio, textio):
 
         textio.cprint('==BEST TEST==')
         textio.cprint('EPOCH:: %d, Loss: %f rot_MSE: %f, rot_MAE: %f, trans_MSE: %f, trans_MAE: %f, recall: %f%%'
-                      % (epoch, best_test_loss, best_test_r_mse, best_test_r_mae, best_test_t_mse, best_test_t_mae, best_test_recall))
+                      % (epoch, best_test_loss, best_test_r_mse, best_test_r_mae, best_test_t_mse, best_test_t_mae,
+                         best_test_recall))
 
         boardio.add_scalar('train/loss', train_loss, epoch)
         boardio.add_scalar('train/rotation/MSE', train_r_mse, epoch)
@@ -170,7 +168,6 @@ def train(args, net, train_loader, test_loader, boardio, textio):
         boardio.add_scalar('best_test/translation/MAE', best_test_t_mae, epoch)
         boardio.add_scalar('best_test/recall', best_test_recall, epoch)
 
-
         if torch.cuda.device_count() > 1:
             torch.save(net.module.state_dict(), 'checkpoints/%s/models/model.%d.t7' % (args.exp_name, epoch))
         else:
@@ -178,7 +175,7 @@ def train(args, net, train_loader, test_loader, boardio, textio):
         gc.collect()
 
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     args = init()
     boardio = SummaryWriter(log_dir='checkpoints/' + args.exp_name)
     textio = IOStream('checkpoints/' + args.exp_name + '/run.log')
@@ -200,7 +197,7 @@ if __name__ =="__main__":
 
     start = datetime.datetime.now()
     train(args, net, train_loader, test_loader, boardio, textio)
-    print("training time:", datetime.datetime.now()-start)
+    print("training time:", datetime.datetime.now() - start)
 
     print('FINISH')
     boardio.close()

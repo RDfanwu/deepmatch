@@ -10,11 +10,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
-from data.dataload import ModelNet40
-from init import init
-from init import IOStream
-from models.net import DeepMatch
-from util import transform_point_cloud, npmat2euler
+from data import ModelNet40
+from model import DeepMatch
+from init import *
+from utils import *
 
 def test_one_epoch(net, test_loader):
     net.eval()
