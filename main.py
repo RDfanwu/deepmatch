@@ -312,15 +312,11 @@ if __name__ == "__main__":
     textio.cprint(str(args))
 
     net = DeepMatch(args).cuda()
-    if torch.cuda.device_count() > 1:
-        net = nn.DataParallel(net)
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
 
     test_loader = DataLoader(
         ModelNet40(num_points=args.num_points, partition='test', gaussian_noise=args.gaussian_noise,
                    unseen=args.unseen, factor=args.factor),
         batch_size=args.test_batch_size, shuffle=False, drop_last=False)
-
 
     if args.eval:
         if args.model_path == '':
@@ -332,6 +328,9 @@ if __name__ == "__main__":
             print("can't find pretrained model")
         else:
             net.load_state_dict(torch.load(model_path), strict=False)
+            if torch.cuda.device_count() > 1:
+                net = nn.DataParallel(net)
+                print("Let's use", torch.cuda.device_count(), "GPUs!")
             test(net, test_loader, textio)
     else:
         train_loader = DataLoader(
@@ -339,10 +338,13 @@ if __name__ == "__main__":
                        unseen=args.unseen, factor=args.factor),
             batch_size=args.batch_size, shuffle=True, drop_last=True)
 
+        if torch.cuda.device_count() > 1:
+            net = nn.DataParallel(net)
+            print("Let's use", torch.cuda.device_count(), "GPUs!")
+
         start = datetime.datetime.now()
         train(args, net, train_loader, test_loader, boardio, textio)
         print("training time:", datetime.datetime.now() - start)
-
 
     print('FINISH')
     boardio.close()
